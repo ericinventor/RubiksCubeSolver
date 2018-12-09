@@ -12,7 +12,7 @@
 						<div class="content">
 							<div class="inner">
 								<h1>Robotic Rubik's Cube Solver</h1>
-								<p> <a href="http://www.microgoats.life">TEAM RONBERGYPI</a>: </p>
+								<p>TEAM RONBERGYPI: </p>
 								<p> ERIC BERG <br> YANGYI (RON) HAO </p>
 								<p> AN ECE 5725: EMBEDDED OPERATING SYSTEMS FINAL PROJECT</p>   
 
@@ -170,12 +170,12 @@
 
 								<center><img src="./files/koceimba.png"  width = 400></center><br>
 
-								<p>We mostly referred to this github <a href= "https://github.com/adrianliaw/PyCuber">repo</a> to build our UI system. This repo not only created a framework to represent a rubik cube object, but also provided a solving algorithm. However we mostly focused on the prior, as we already had our Kociemba algorithm. As this <a href = "https://github.com/adrianliaw/PyCuber/issues/14">post<a/> suggested, we can pass in a solution using Kociemba’s algorithm to the cube object, to manipulate the cube to the current state from the original clean state.</p>
+								<p>We mostly referred to this github <a href= "https://github.com/adrianliaw/PyCuber">repo</a> to build our UI system. This repo not only created a framework to represent a rubik cube object, but also provided a solving algorithm. However we mostly focused on the prior, as we already had our Kociemba algorithm. As this <a href = "https://github.com/adrianliaw/PyCuber/issues/14">post</a> suggested, we can pass in a solution using Kociemba’s algorithm to the cube object, to manipulate the cube to the current state from the original clean state.</p>
 
 
 								<center><img src="./files/koceimba2.png" width = 450 ></center><br>
 
-								<p>The author of PyCuber repo claimed that the above is going to print the cube in six colors in the terminal, but according to our testing it was only able to print the characters that represent those colors, such as “y”, “r”, or “b”. Our contribution is that we created a helper function called “printRubik” that will actually print the rubik cube object in colors in the terminal. It’s listed here in our github <a href="https://github.com/ericinventor/RubiksCubeSolver/blob/f4705570636180ee77435acf9fdf772a9bf77de0/Code/PyCuberColorScheme.py#L10">repo.</a> </p>
+								<p>The author of PyCuber repo claimed that the above is going to print the cube in six colors in the terminal, but according to our testing it was only able to print the characters that represent those colors, such as “y”, “r”, or “b”. Our contribution is that we created a helper function called “printRubik” that will actually print the rubik cube object in colors in the terminal. It’s listed here in our github <a href="https://github.com/ericinventor/RubiksCubeSolver/blob/f4705570636180ee77435acf9fdf772a9bf77de0/Code/PyCuberColorScheme.py#L10">repo</a>. </p>
 							
 
 								<h3><b>Implementing Moves</b></h3>
@@ -184,7 +184,7 @@
 
 								<center><img src="./files/moves.png" alt="currISR" width = 550><br></center><br>
 
-								<p>Our executeOneMove function will be able to decode the moves, such as “R”, “L”, “U’”, and etc. into instructions for the motor. If you want build a rubik solver on your own, you might want to do something specific to your mechanical designs here, but the idea here is to have multiple layers of abstraction to make things simpler. As an <a href=" https://github.com/ericinventor/RubiksCubeSolver/blob/8e779955a0c595d5887c0f50653e87478073719e/Code/MechanicalAPI.py#L197">example,></a>, to interpret “R”, we called a few helper functions that are specific to the claws. </p>
+								<p>Our executeOneMove function will be able to decode the moves, such as “R”, “L”, “U’”, and etc. into instructions for the motor. If you want build a rubik solver on your own, you might want to do something specific to your mechanical designs here, but the idea here is to have multiple layers of abstraction to make things simpler. As an <a href=" https://github.com/ericinventor/RubiksCubeSolver/blob/8e779955a0c595d5887c0f50653e87478073719e/Code/MechanicalAPI.py#L197">example</a>, to interpret “R”, we called a few helper functions that are specific to the claws. </p>
 
 
 							
