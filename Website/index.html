@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Robotic Rubik's Cube Solver</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -200,36 +200,43 @@
 
 						<!-- Results -->
 							<article id="Results" style="display: none;" class="">
-								<h2 class="major">Results &amp; Future Improvement</h2>
-                                <h3><b>Testing Accelerometer</b></h3>  
-                                <p>After using the I2C helper library created by other 4760 students, we were easily able to read IMU data from the MPU 6050. We wrote a simple thread to print out the xAccel, y Accel, and zAccel values to the TFT screen. Then we manipulated the accelerometer to ensure the readings were as expected. The readings were appropriate to given changes in orientation, but when held still, the values were far from static. The values stayed relatively constant, but they still jumped up and down quite frequently when the accelerometer was not moving. When it came time to test the transformation algorithm, the table was extremely jittery due to the noise in the IMU. To improve this we implemented a simple running average filter to smooth the incoming readings. This improved the vibration of the table when the IMU was being held still. We changed the smoothing timestep until the table stayed fixed when the IMU was fixed. The final filter implemented was a 20 step filter, meaning every 20th reading is average with the previous 19 readings.</p>
-                                <h3><b>Testing Stepper motors</b></h3> 
-                                <p>Because we built the stewart platform very early on with stepper motors installed, we setup an additional testing station with a stepper and stepper driver to test stepper movement without the physical constraints of the table, which limit range of motion. Two main issues arose when trying to control steppers, speed control and smoothness of motion. In order to achieve high resolution stepping, we chose to run the motors at 1/32 microsteps, meaning every microstep is 0.05 degrees of rotation. By running at 32 microsteps we achieved very smooth control, but the movement was very slow. Because the stepper movements are updated in the ISR, the ISR frequency determines the velocity of the stepper rotation. By decreasing the ISR timer period, which in turn increases the ISR frequency, we were able to achieve both smooth and fast movement. These results were determined form independent stepper testing separate from the stewart table. We also used this setup to implement minimum and maximum stepper positions by setting bounds on the variables that track stepper position. Then we tested setting setpoint for the stepper and ensuring the stepper would always reach the setpoint quickly and smoothly. Another important factor we tuned in this setup was current limits for the stepper drivers. Unless the current limits were set properly, the motor could skip steps or vibrate unnecessarily. We set the current limits relatively low to keep the vibrations low while still having enough current to provide sufficient torque. This current was approximately 0.1-0.2A per stepper motor.</p>
-                                <h3><b>Algorithm Testing</b></h3>
-                                <p>Once we achieved smooth and quick setpoint tracking on a single motor with hardcoded setpoints, we implemented Padraig’s algorithm to convert accelerometer readings to stepper setpoints. When we first tested this, the motor was behaving quite spontaneously. It would generally change setpoint as the accelerometer change orientation, but it was not always correct. After troubleshooting and reverting back to the Matlab calculations done to establish the algorithm, we noticed that complex values were being generated in the conversion from the equations converting the length vector to the stepper angle. By setting the bounds to the input of the arccosine function we resolved this issue and the stepper began behaving appropriately. </p>
-                                <h3><b>Full Platform Testing</b></h3>
-                                <p>After the algorithm correctly converted accelerometer data to stepper motion on a single stepper outside the stewart platform, we tested the each of the algorithm’s stepper angle outputs by switching the stepper motor to the three  different drivers and ensuring the stepper shaft reacted appropriately. Once this was done,  we moved to testing on the platform using all three motors. Fortunately, and somewhat miraculously, after performing all the previously described subsystem tests, the first  full system test worked as expected as shown in the video below:</p>
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/30_bNm-z9GI" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-                                <h3><b>Calibration and Tuning</b></h3>
-                                <p> Of course, the table was quite jittery and loud, and there was still lots to be improved. For calibration, we ignore the IMU readings for the first few seconds to raise the table to the correct height, then IMU readings are accepted and passed through Padraig’s algorithm.To tune the system we played with two values, IMU_read_period, and TIMER2_peirod, which control the ISR and IMU thread frequencies respectively. After playing around with different values, we were able to analyze patterns of movement as we increased or decreased the value. As mentioned in the Stepper Motor section, By increasing the ISR frequency, we could achieve faster motion and therefore faster response time, but the stepper vibrations were augmented.  By increasing the IMU frequency we also increased response time of the system with respect to user input, but again vibration increased due to high sensitivity to IMU changes. For best performance we spent a long time tuning the ISR period, and IMU read period, to work well with one another and to balance maximum performance with jitter reduction.</p>
-                                <p>In the end we settled on an IMU read frequency of 500 Hz and an ISR frequency of 40KHz. This provided solid performance and speed. These were determined by increasing the ISR frequency until we had a fast speed without too much vibration caused by extreme accelerations.</p>
-                                <h3><b>Full System Results</b></h3>
-                                <p>All in all, we were very pleased with the performance of our stewart platform. We tested platforms ability to mimic acceleration orientation and movement by isolating certain axes. When the micro-goat was pitched forward or backward in the x-axis, only one motor would change angle because only the phi angle was changing. Then when the goat was tilted in the y-axis, the other two motors would change angel while the x-axis motor remained fixed because only the theta angle was changing. All of these results were observed and were in alignment with the expectations. Finally, in order to not exceed the mechanical bounds of motion of the platform, we tested our software-set bounds by tilting the accelerometer past the achievable range of the table to make sure the steppers did not try to achieve that angle. As expected, the motors would only go to their minimum or maximum position instead of forcibly trying to work against the systems physical constraints. To test the functionality and control of the platform, our first test was to balance a ping pong ball on the table. This video shows that our platform’s performance is controllable enough to be capable of balancing a ball given user input:</p>
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/h4IYTBTYSow" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-                                <p>Our next test involved implementing a maze game which require the user to traverse a ball around a curved path by tilting the table without letting the ball fall of the table. Again our system was well tuned and was very capable of this test given good controller input. A video of a user playing the maze game is shown below:</p>
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/05-RaxBwdmg" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+								<h2 class="major">Results and Testing</h2>
+                                <h3><b>Testing </b></h3>  
+                                <p>The goal of our testing was focused on making sure each individual parts works before putting them together.
+                                <br><br> The first testing that we did was to make sure that reading and writing jpeg images works, because our PiCam would store the picture taken in the file system, and the program will be reading out those pictures as numpy arrays. We wrote ImageIOTest.py for this purpose. We were able to verify that the image is a 3-D numpy array, and the z axis are the R, G, and B layers.
+                                <br><br> The second testing was to test that PiCam works. We wrote CameraTest.py to live stream for 60 seconds, then take a picture and store it in the file system. One thing to note here is that there are a few different modes of PiCam. In certain modes PiCam will not capture the full Field Of View (FoV) instead cut of a decent portion. This becomes particularly important if you want to shorten the distance between PiCam and the rubik cube to make the mechanical design concise. There might be settings to specifically alter the modes, but what we did was to set the resolution of the camera to 640*480 to force to mode #7 which does capture full FoV.
+                                <br><br> The forth testing was to test our stepper motors work. We wrote SteppersTest.py for this purpose. We altered between different configurations to look for the best motor setting for our design. SPR (Steps Per Revolution) defines how many steps each 360 degree revolution has. The more steps it has the smoother and slower the motion is. The delay defines how long it pauses between each other steps, so the longer the delay is the slower the stepper turns. SPR may also has to deal with the torque delivered, it’s part of our future work to take the torque into consideration to further find the best settings for the stepper motors.
+                                <br><br> The forth testing was to test that our claws work correctly. We wrote ClawsTest.py for this purpose. It essentially calls the functions that runs our claws in MechanicalAPI.py, and we made sure that the claws motions were indeed in accordance to the purpose of those functions. We had some problems with the solenoids not fully retracting the claws, and the stepper motors error accumulating over time. The project would have been more successful if we were well aware with these issues beforehand and able to address them more effectively. In fact we are not yet able to resolve these and it’s part of our future works.</p>
+
+								<h3><b>Results </b></h3> 
+                               <p> Overall, the individual components were mostly successful, as we were able to work out the scanning, the algorithm, and the motors. However, we weren’t quite able to achieve our original goal letting it solve a rubik, but given that the individual components were working, we can totally see it happening if we spend more time into perfecting our camera and motors.</p>
+                               <p>We were able to run through the entire scanning procedure, which involved the stepper motors, the solenoids, and the camera. The problem was that the recognization was not very accurate and was not able to read the color of a few tiles. 
+                               	<br>[VIDEO]We were also able to run a few simple algorithms on our rubik cube. [VIDEO]
+                               	Here is a video that shows the rubik solver running an entire algorithm to solve the cube, but without the actual cube inside. As can be seen from the video, the errors on the stepper motors accumulate and in later stages, the claws were pretty far off from being perpenticular. [VIDEO]
+                               </p>
+	
+
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/MVO0t0BWCIU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 								
 							<div class="close">Close</div></article>
 
 
 							<article id="Conclusion" style="display: none;" class="">
-								<h2 class="major">Conclusion</h2>
-								<p>While some of the elements of our design could and will be further improved in the future, we’re very happy with how our results stand up to our goals and expectations. We had a lot of fun designing and building the hardware sections of the project, spent our fair share of time scratching our heads figuring out the software, and managed to get everything working in time for demo in the end. We also succeeded in creating a complete, aesthetically pleasing package for the project with a tray for electronics placement and legs to lift everything off of the table. </p>
-								<p>We were very grateful to be able to reference the i2c setup h file from the 2015 project Self-balancing robot - this saved us a lot of time getting the MPU working. The final performance of the motion platform after tuning was favorable. It swiftly updates to changes in the accelerometer input, with minimal noise at steady state. </p>
-								<p>We learned a lot from the process, and would definitely make some changes if we wanted to build a Stewie 2.0. On the input side, we would use more sophisticated filtering on the accelerometer to reduce jitter. Finishing off the variable-velocity stepper driver code would result in a great improvement of speed and smoothness; we will probably get this change implemented as soon as we’re back from break with our current hardware. We would also like to get the optical encoders running for closed loop performance and to eliminate drift from skipped steps over a long period of operation.</p>
-								<p>During the design and construction of Stewie, we strictly followed the IEEE Code of Ethics. We made safety conscious decisions such that nobody was in danger of getting injured. We were honest and realistic in stating our claims according to data collected. We were accurate in listing our component costs to our best knowledge. We strove to solve challenging problems by ourselves, sought the help of the instructor and TAs for those we were not able to resolve, and were willing to accept constructive feedback and incorporate it into our design. We did not hold any bias against anyone nor engaged in acts of discrimination based on race, religion, gender, disability, age, national origin, sexual orientation, and gender identity. We treated all of our peers with equal respect and offered help to our colleagues whenever possible. We gave credit when using code from any external sources, to prevent the perception of any conflict of interest, and acknowledge all contributions made to the final project.</p>
+								<h2 class="major">Conclusions and Future Work</h2>
+								<h3 class="major">Conclusions</h3>
+								<p>The main cause of our failure to fully solve a rubik’s cube is mechanical slop (backlash) leading to imperfect 90 degree turns causing the cube to jamb. The slop comes from both the gears and the claw. The gears have a very small gap between them in order to allow for them to slide, which results in a small air gap that allows the small gear to pivot very slightly while the large gear is fixed. This means the claw may rotate more or less than the stepper rotates. The claw is also slightly larger than the cube (about 1mm) to allow for misalignment in the clas and the cube. This means the cube may rotate slightly less than the claw rotates. In other words, the rotation of the cube face and stepper shaft are not totally proportional.  The performance of the solver is very much dependant on its ability to makes precise, consistent 90 degree turns of each of the faces. If any move is not a full 90 or multiple of 90 degrees, the next move is likely to fail because the cube will jamb. Because mechanical arm assembly was an open loop system, we had know way of knowing the true position of the the cube face. Although steppers are extremely accurate and can be commanded to make very precise, perfect 90 degree rotations, the mechanical slop (backlash) in the system meant the claws were not as precise or consistent. In the Future Work section below we outline multiple possible improvements/solutions to the backlash problem..</p>
 
+								<h3 class="major">Future Work</h3>
+
+								<p> In order to reduce or eliminate the mechanical backlash problem, a few approaches can be taken
+								<br>1. Reprint claws to be exact size of cube with 45 chamfer on leading edge
+								<br> 2.Use precision metal (antibacklash) spur gears instead of 3D printed gears. These will most likely have a smaller tooth module
+								<br> 3. Replace spur gears with belts and pulleys and change fixed size claws to opening and closing grippers. (remove solenoids)
+								<br> These steps should be implemented in order, and only continue to the next step if the issue still persists. If you reach step 2, make sure that the small gear is wide enough to slide and still be in contact with the large drive gear on the stepper.</p>
+
+							<p>
+								There are also a few steps to be done to make the camera scanning process more accurate. The camera was earlier tuned when it was not installed in our cube solver, so now that it’s installed, we could tune it once again, so that it can better adapt the lightness environment from within the cube.   By using HSV instead of RGB representations we were already able to partially address the noises from lightness, but to further reduce the noises introduced by different environment setup, we should add a shade on top of the rubik to cover it, or add a few lamps around it.</p>
 							<div class="close">Close</div></article>
 
 
@@ -256,62 +263,55 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>PIC32MX250F128B + Big Board</td>
-												<td>$15.00</td>
+												<td><a href="https://www.target.com/p/raspberry-pi-3-model-b-project-board/-/A-53349740?ref=tgt_adv_XS000000&AFID=google_pla_df&fndsrc=tgtao&CPNG=PLA_Electronics%2BShopping_Local&adgroup=SC_Electronics&LID=700000001170770pgs&network=g&device=c&location=9005781&gclsrc=aw.ds&ds_rl=1246978&ds_rl=1248099&ds_rl=1246978&ref=tgt_adv_XS000000&AFID=google_pla_df&CPNG=PLA_Electronics+Shopping_Local&adgroup=SC_Electronics&LID=700000001170770pgs&network=g&device=c&location=9005781&gclid=CjwKCAiA9K3gBRA4EiwACEhFe2paAteukKyXdrkntnY0GHw7-C34lBivyRuI_dnDLTUv5O0j9G5KwBoC50QQAvD_BwE&gclsrc=aw.ds">Raspberry Pi</a></td>
+												<td>$34.99</td>
 												<td>1</td>
-                                                <td>$15.00</td>
+                                                <td>$34.99</td>
 											</tr>
 											<tr>
-												<td>MicroStickII</td>
-												<td>$1.00</td>
+												<td><a href="https://www.amazon.com/gp/product/B06XH9Y2XJ/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1">Rubik Cube</a></td>
+												<td>$7.89</td>
 												<td>1</td>
-                                                <td>$1.00</td>
+                                                <td>$7.89</td>
 											</tr>
 											<tr>
-												<td>TFT LCD</td>
-												<td>$10.00</td>
+												<td><a href="https://www.ebay.com/itm/5x-StepStick-DRV8825-Stepper-Motor-Driver-Module-for-3D-Printer-Reprap-RP-A4988/263902363753?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649">Polular DRV8825 Stepper Drivers (5pk)</a></td>
+												<td>$13.08</td>
 												<td>1</td>
-                                                <td>$10.00</td>
+                                                <td>$13.08</td>
 											</tr>
 											<tr>
-												<td>BreadBoard</td>
-												<td>$6.00</td>
+												<td><a href="https://www.ebay.com/itm/US-Ship-Nema-17-Stepper-Motor-37oz-in-12V-0-4A-3D-Pinter-Reprap-Arduino-DIY-CNC/331601550532?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649">NEMA 17 steppers</a>></td>
+												<td>$7.00</td>
+												<td>4</td>
+                                                <td>$28.10</td>
+											</tr>
+											<tr>
+												<td><a href="https://www.ebay.com/itm/DC12V-2A-20N-10mm-Pull-Push-Type-Linear-Motion-Solenoid-Electromagnet/263433211357?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2060353.m2749.l2649">Solenoids</a></td>
+												<td>$6.72 </td>
+												<td>4</td>
+                                                <td>$26.88</td>
+											</tr>
+											<tr>
+												<td><a href="https://www.amazon.com/gp/product/B0057OC5O8/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1">4 Channel Relay</a></td>
+												<td>$6.99</td>
 												<td>1</td>
-                                                <td>$6.00</td>
+                                                <td>$6.99</td>
 											</tr>
 											<tr>
-												<td><a href="https://www.ebay.com/itm/US-Ship-Nema-14-Stepper-Motor-18Ncm-0-8A-3D-Pinter-Makerbot-Reprap-CNC-Robot-OSM/331603049924?epid=1747924612&hash=item4d3514fdc4:g:hKMAAOSwu4BVmx94">NEMA 14 1.8 degree 12-24VDC  Stepper Motors</a></td>
-												<td>$8.60 </td>
-												<td>3</td>
-                                                <td>$25.8</td>
-											</tr>
-											<a href=""></a>
-											<tr>
-												<td><a href="https://www.ebay.com/itm/5pcs-DRV8825-Stepper-Motor-Driver-Module-for-RepRap-3D-Printer-StepStick-TE562/222256747450?epid=509244795&hash=item33bf88d3ba:g:F7YAAOSwwvBZnAyq">DRV8825 Stepper Motor Driver Module</a></td>
-												<td>$1.99</td>
-												<td>3</td>
-                                                <td>$5.98</td>
-											</tr>
-											<tr>
-												<td><a href="https://www.ebay.com/itm/MPU-6050-6-DOF-3-Axis-Accelerometer-Gyroscope-Sensor-Module-GY-521-for-Arduino/201004496054?epid=27003531553&hash=item2ecccd34b6:g:UjQAAOSwstxVXYz8">MPU-6050 6DOF Accelerometer</a></td>
-												<td>$1.23</td>
+												<td><a href="https://www.amazon.com/gp/product/B01NCOMFLT/ref=oh_aui_detailpage_o01_s00?ie=UTF8&psc=1">8mm Shaft (4 pk)</a></td>
+												<td>$9.49</td>
 												<td>1</td>
-                                                <td>$1.23</td>
-											</tr>
-												<tr>
-												<td>Avago Technologies Optical Encoder HEDS-5540-A02 (unused)</td>
-												<td>$15.00</td>
-												<td>3</td>
-                                                <td>$45.00</td>
+                                                <td>$9.49</td>
 											</tr>
 											<tr>
-												<td><a href="https://www.amazon.com/gp/product/B00S50PXCM/ref=oh_aui_detailpage_o07_s00?ie=UTF8&psc=1">RC Car Tie Rod Ends</a></td>
-												<td>$2.30</td>
-												<td>3</td>
-                                                <td>$6.90</td>
+												<td><a href="https://www.amazon.com/608-Bearings-Shielded-Miniature-Skateboard/dp/B07211VH78/ref=sr_1_6?ie=UTF8&qid=1541905516&sr=8-6&keywords=8mm+bearings&dpID=510jY2D0GnL&preST=_SX342_QL70_&dpSrc=srch">8mm Bearings (20pk)</a></td>
+												<td>$9.99</td>
+												<td>1</td>
+                                                <td>$9.99</td>
 											</tr>
 											<tr>
-												<td>Various M3 Hardware from Adam's Sock Drawer</td>
+												<td>Various breadboard and wires</td>
 												<td>$0.0</td>
 												<td>x</td>
                                                 <td>$0.00</td>

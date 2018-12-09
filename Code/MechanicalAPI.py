@@ -2,23 +2,23 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 # statics definition
-RIGHT_DIR = 5   # direction GPIO pin
-RIGHT_STEP = 6  # step GPIO pin
+RIGHT_DIR = 5      # direction GPIO pin
+RIGHT_STEP = 6     # step GPIO pin
 LEFT_DIR = 20
 LEFT_STEP = 21
 FRONT_DIR = 19
 FRONT_STEP = 26
 BACK_DIR = 17
 BACK_STEP = 27
-RIGHT_SOLEN = 22  # right solenoid pin
+RIGHT_SOLEN = 22   # right solenoid pin
 LEFT_SOLEN = 13
 FRONT_SOLEN = 4
 BACK_SOLEN = 12
-CW = 1           # clockwise rotation
-CCW = 0          # counterclockwise rotation
-ATTACH = GPIO.LOW       # signal for the solenoid to attach
-DETACH = GPIO.HIGH       # signal for the solenoid to detach
-SPR = 320        # steps per revolution (360/1.8)
+CW = 1             # clockwise rotation
+CCW = 0            # counterclockwise rotation
+ATTACH = GPIO.LOW  # signal for the solenoid to attach
+DETACH = GPIO.HIGH # signal for the solenoid to detach
+SPR = 320          # steps per revolution (360/1.8)
 
 # global variables definition
 speed = 2
