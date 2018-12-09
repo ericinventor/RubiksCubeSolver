@@ -80,11 +80,13 @@
 								<h4><b>Mechanical Arm Assembly</b></h4>
 
 								<p> The arm assembly was designed to be fast and tightly packaged. The design requirements for the arm assembly were that it must be able to rotate the claw using a stepper motor and grab or release the cube face using a solenoid. To achieve both these degrees of freedom, we chose a sliding spur gear transmission. This allows for the main shaft and claw to slide forward and backward with the help of the solenoid to engage or disengage the cube face, while still transferring rotation through the stepper motor’s main gear.  In order to increase the speed of rotation, we used a transmission with a ~2.5:1 gear ratio. Because the stepper motor was below the main shaft, as opposed to in line, the solenoid could be place in line with the main shaft. We chose to 3D print the fixed size claws out of PLA plastic and glue the claws onto our steel shafts. The shafts were constrained by the bearings using 3D printed bearing blocks. The spur gears themselves were 3D printed with a 1.5m tooth module. The main gear was printed with a D-bore to fit the stepper motor shaft, while the small gear was glued to the steel shaft using CA glue. Stepper motor mounts were also designed and printed to constrain the motors to the the underside of the top chassis plate. Small risers were also printed to axially align the solenoids with the main shafts. All parts were fastened to top plate of the chassis using M3 hardware and CA glue:</p>
-								<img src="./files/isometric.png" alt="iso" width = 750><br></center><br>
+								<img src="./files/top.jpg" alt="iso" width = 550><br></center><br>
 
 								<h4><b>Chassis</b></h4>
 
 								<p>The chassis was designed to emanate simple, clean, elegant beauty. A mix of angular, and curvaceous edges and perimeters were used. The chassis was designed completely symmetrically around the central axis. The top chassis plate had all necessary mounting holes for the mechanical arm assemblies, while the bottom chassis plate was main used to mount the Pi camera and all other electronics, including the 4 channel relay, the Raspberry Pi, and 2 breadboards. The legs were designed to separate the two plates, and lift the entire chassis off the ground. Finally, the top plate was designed to be easily removed by lifting it vertically since the legs simply fit into slot through the top plate. The entire chassis was made using 12” x 12” x 02” white acrylic sheets. The chassis was assembled using CA glue.</p>
+
+								<img src="./files/chassis2.png" alt="iso" width = 550><br></center><br>
 
 								<h3><b>Actuators and Electrical Components</b></h3>
 								<h4><b>Stepper Motors</b></h4>
@@ -156,14 +158,13 @@
 
 								<p> The center tile of a facet will always stay there: If you know a little bit about the structures of the rubiks, there are typically the side tiles, the corner tiles, and the center tiles. What’s special about the center tiles is that it will always stay with that face no matter how much you mess up the rubik, so by reading the color of the center tile, we know the color of that entire facet. </p>
 
-								<p>The next thing is to construct the output string. We had our own scanning sequence and there are certain conventions that need to be followed when constructing the String Representation. As in the next diagram, we had our own scanning sequence that’s optimized towards mechanical simplicity, and it does not necessarily align with the sequence of the output string. Our String Representation is designed to be fed into Henry Kociemba’s two-phase algorithm implemented in this github repo: https://github.com/muodov/kociemba, which used this representation as the input, so out of convenience, we followed the same design.</p>
+								<p>The next thing is to construct the output string. We had our own scanning sequence and there are certain conventions that need to be followed when constructing the String Representation. As in the next diagram, we had our own scanning sequence that’s optimized towards mechanical simplicity, and it does not necessarily align with the sequence of the output string. Our String Representation is designed to be fed into Henry Kociemba’s two-phase algorithm implemented in this github <a href ="https://github.com/muodov/kociemba">repo,</a>, which used this representation as the input, so out of convenience, we followed the same design.</p>
 
 
 
 								<h3><b>Solving Algorithm and User Interface</b></h3>
 
-								<p>We used Henry Kociemba’s two-phase algorithm to solve the cube. The github repository by muodov already implements this algorithm so we just took advantage of that. This site is not meant to explain the solving algorithm, as there are better sites to read for this purpose. We recommend reading the following links to understand Kociemba’s two-phase algorithm.
-								(http://kociemba.org/twophase.htm, http://kociemba.org/math/twophase.htm, http://kociemba.org/math/imptwophase.htm ) </p>
+								<p>We used Henry Kociemba’s two-phase algorithm to solve the cube. The github repository by muodov already implements this algorithm so we just took advantage of that. This site is not meant to explain the solving algorithm, as there are better sites to read for this purpose. We recommend reading the links listed in the References section of the Appendix to understand Kociemba’s two-phase algorithm.</p>
 
 
 								<p> Calling for a solution is as easy as the following one-liner, where each state is a 54 characters long String Representation of the cube state, and typically the solved state is “UUUUUUUUURRRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB”, representing a solved rubik cube. In addition, what’s nice about this implementation is that the second argument can be any valid rubik cube’s state, and the algorithm would still be able to provide a solution that solves the rubik to that arbitrary state. This feature proved to be very convenient as we were building our UI system to demonstrate the cube step by step.</p>
@@ -229,11 +230,14 @@
 
 								<h3 class="major">Future Work</h3>
 
-								<p> In order to reduce or eliminate the mechanical backlash problem, a few approaches can be taken
-								<br>1. Reprint claws to be exact size of cube with 45 chamfer on leading edge
-								<br> 2.Use precision metal (antibacklash) spur gears instead of 3D printed gears. These will most likely have a smaller tooth module
-								<br> 3. Replace spur gears with belts and pulleys and change fixed size claws to opening and closing grippers. (remove solenoids)
-								<br> These steps should be implemented in order, and only continue to the next step if the issue still persists. If you reach step 2, make sure that the small gear is wide enough to slide and still be in contact with the large drive gear on the stepper.</p>
+								<p> In order to reduce or eliminate the mechanical backlash problem, a few approaches can be taken:</p>
+
+								<ol>
+                                    <li>Reprint claws to be exact size of cube with 45 chamfer on leading edge</li>
+                                    <li>Use precision metal (antibacklash) spur gears instead of 3D printed gears. These will most likely have a smaller tooth module</li>
+                                    <li>Replace spur gears with belts and pulleys and change fixed size claws to opening and closing grippers. (remove solenoids)</li>
+                                </ol>
+								<br> These steps should be implemented in order, and only continue to the next step if the issue still persists. If you reach step 2., make sure that the small gear is wide enough to slide and still be in contact with the large drive gear on the stepper.</p>
 
 							<p>
 								There are also a few steps to be done to make the camera scanning process more accurate. The camera was earlier tuned when it was not installed in our cube solver, so now that it’s installed, we could tune it once again, so that it can better adapt the lightness environment from within the cube.   By using HSV instead of RGB representations we were already able to partially address the noises from lightness, but to further reduce the noises introduced by different environment setup, we should add a shade on top of the rubik to cover it, or add a few lamps around it.</p>
@@ -332,9 +336,15 @@
 								</ol>
 
 								<h3 class="major">Appendix F: References</h3>
+							
 								<ul>
-                                    <li><a href="http://www.instructables.com/id/3DOF-Ball-on-Plate-Using-Closed-Loop-Stepper-Motor/">Inspiration</a></li>
-                                    <li><a href="https://web.archive.org/web/20130506134518/http://www.wokinghamu3a.org.uk/Maths%20of%20the%20Stewart%20Platform%20v5.pdf">Wokingham U3A Math Group Paper on Dynamics</a></li>
+									<li><a href="https://github.com/ericinventor/RubiksCubeSolver">Ronbergy Pi Git Repo (for this project)</a></li>
+                                    <li><a href="http://kociemba.org/twophase.htm">Two Phase Algorithm</a></li>
+                                    <li><a href="http://kociemba.org/math/twophase.htm">Two Phase Algortithm Math</a></li>
+                                    <li><a href="http://kociemba.org/math/imptwophase.htm">Two Phase Algortithm Details</a></li>
+                                    <li><a href="https://github.com/adrianliaw/PyCuber">PyCuber Git Repo</a></li>
+                                    <li><a href="https://github.com/muodov/kociemba">Koceimba Git Repo</a></li>
+
 								</ul>
 
 								
