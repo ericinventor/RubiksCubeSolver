@@ -1,0 +1,33 @@
+from MechanicalAPI import *
+from time import sleep
+
+rightClawAttach()
+leftClawAttach()
+backClawAttach()
+frontClawAttach()
+
+rightClawC()
+rightClawC()
+sleep(0.1)
+frontClawC()
+frontClawC()
+sleep(0.1)
+leftClawC()
+leftClawC()
+sleep(0.1)
+backClawC()
+backClawC()
+sleep(0.1)
+#leftCCAndRightC()
+#leftCCAndRightC()
+sleep(0.1)
+#leftCAndRightCC()
+#leftCAndRightCC()
+sleep(0.1)
+#frontCAndBackCC()
+#frontCAndBackCC()
+sleep(0.1)
+#frontCCAndBackC()
+#frontCCAndBackC()
+
+GPIO.cleanup()

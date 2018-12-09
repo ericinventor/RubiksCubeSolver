@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>3DOF Stewart Platform</title>
+		<title>Robotic Rubik's Cube Solver</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<link rel="stylesheet" href="./files/main.css">
 </div><link rel="stylesheet" href="./files/ie9.css">
@@ -12,9 +12,13 @@
 						<div class="content">
 							<div class="inner">
 								<h1>Robotic Rubik's Cube Solver</h1>
-								<p> <a href="http://www.microgoats.life">TEAM MICROGOATS</a>: </p>
-								<p> ADAM WELD <br> PADRAIG LYSANDROU  <br> ERIC BERG </p>
-								<p> AN ECE4760: MICROCONTROLLERS FINAL PROJECT</p>        
+								<p> <a href="http://www.microgoats.life">TEAM RONBERGYPI</a>: </p>
+								<p> ERIC BERG <br> YANGYI (RON) HAO </p>
+								<p> AN ECE 5725: EMBEDDED OPERATING SYSTEMS FINAL PROJECT</p>   
+
+								<h3>Objective</h3>
+
+								<p>Team Ronbergy Pi set out to build a robot that could autonomously solve a Rubik's Cube using a RasperryPi, a Pi camera, and a custom mechanical chassis.  Our goal was to build a solver that could scan the cube, compute the solution algorithm the cube, and execute the algorithm using four mechanical arm assemblies.</p> 
                                 
 							</div>
 						</div>
@@ -37,25 +41,29 @@
 						<!-- Intro -->
 							<article id="Intro" style="display: none;" class="">
 								<h2 class="major">Introduction</h2>
-								<p>Stewie: A 3DOF Motion Table</p>
+								<p>RonbergyPi Solver:   A Robotic Rubiks Cube Solver</p>
 
-								<p>This website serves as irrefutable evidence that a single goat, with the help of a few stepper motors, really can move mountains. Team Micro-goat proved this hypothesis by building a Stewart motion platform controlled by an accelerometer embedded within the aforementioned goat. We have dubbed our diabolical creation Stewie. The platform mirrors the attitude of the goat to about one degree of accuracy, and is able to lift about five hundred grams of alfalfa, shrubbery, socks, and other goat foods. Stewie’s brain is a PIC32MX250 microcontroller. While much of his current utility is as a form of entertainment, we hope that Stewie can eventually fulfill many practical jobs, such as testing spacecraft sensor systems, calibrating antenna designs with extreme accuracy, and as a VR simulator motion platform for ferrets. </p>
+								<center><img src="./files/intro.jpg"  width = 550><br></center><br>
 
-								<img src="./files/toppic.jpg" alt="toppic"  width = 750><br></center><br>
+								<p>For this project, we chose to build a robotic rubik’s cube solver using a Raspberry Pi. Our goal was to build a robot that could scan a rubik’s cube, compute the algorithmic solution, and execute the algorithm moves to solve the cube.  We designed a fully custom mechanical chassis, consisted of both laser cut acrylic and 3D printed parts. We used a Raspberry PI for all processing and control, a Pi camera to scan the faces of the Rubik’s cube, 4 stepper motors for rotation of each face, and 4 solenoids for engagement of the claws on each face. Unfortunately, our final project was not able to fully solve a cube due to mechanical slop, but in the Future Work section we reference improvements to solve the issues we faced. All of our code and mechanical assemblies worked very well independently, but the arm motions were not consistent enough to implement a full set of moves to solve the cube. With just a few changes, our project can be a fully functioning, sexy, and fast Rubik’s cube solver. All code and CAD files are available in the git repository linked in the Appendix section. </p>
+
+								
 
 							<div class="close">Close</div></article>
 
 						<!-- HLD -->
 							<article id="HLD" style="display: none;">
 								<h2 class="major">High Level Design</h2>
-								<p> Our rationale when picking a project was to design a physical device that involved significant electrical and mechanical integration, an interesting controls problem, and that would provide us with an interesting and useful piece of hardware when everything was over and done with. </p>
-								<p>While our initial considerations were all flying devices, we decided to stay grounded in reality with a project that would be easier to test at the bench. We found a few youtube videos of stewart platforms, which are commonly used in a 6DOF configuration as the backbone of car and airplane simulators. Here’s a picture of a large stewart platform used to point experimental antennae.
-								<img src="./files/bigstewart.jpg" alt="csteppte" width = 750><br></center><br>
+								<p> There are many approaches that can be taken when building a rubik’s cube solving robot. A robotics solver can be made with anywhere from 2 to 6  mechanical arm assemblies. With only two arms, each move takes multiple steps because not all faces can be rotated at any given time, instead the cube must be reoriented before performing the move on the appropriate face. With 6 assemblies, every move takes exactly one step, meaning a 20 move solution algorithm only takes 20 steps to execute. 
 
-								We eventually came upon <a href="https://www.youtube.com/watch?v=ASe9uZmp-y0">this</a> 3DOF variant being used to roll a marble around on a plate.</p>
+								<br><center><img src="./files/soler_6arms.jpg" alt="csteppte" width = 250>
+								<img src="./files/solver_2arms.png" alt="csteppte" width = 250></center><br>
 
-								<p>This design served as the inspiration for our project’s mechanical design. Rather than running a closed loop control system on a marble with a capacitive touch screen, as shown in the above video, we decided to invite user input through an accelerometer embedded into a controller. </p>
-								<p> Our motion platform was designed with three degrees of mechanical freedom, while the accelerometer is only outputs two values for pitch and roll of the controller. These values are calculated by measuring the downwards acceleration of gravity. The Z (vertical) axis of our table is thus constrained to a constant value in software. While it’s true that we could have achieved 2DOF movement with only two actuators rather than three, we preferred the look of the triangular table and thought that the control algorithm needed to translate from accelerometer readings to motor outputs would be an interesting challenge.</p>
+								We chose 4 arm assemblies because it was the most we could use without going over budget. Every arm assembly requires two degrees of freedom, one for rotation of the face and one for engagement of the face (grabbing and releasing). The second major mechanical design decision to be made is whether the engagement occurs using opening and closing grippers or a fixed size claw that slides onto and off of the cube face. We decided to use a fixed claw because we wanted to reduce mechanical complexity and increase the speed of the solver because moving in and out could take less time then opening and closing a gripper. For the rotation degree of freedom, we chose stepper motors.because they are very accurate and can be controlled precisely using steps instead of running a motor at a certain velocity for a certain amount of time. We chose gear the stepper output to increase the final speed of the claw for faster move time. For the engagement/disengagement degree of freedom, we chose to using solenoids with a 1cm stroke. Solenoids are very easy to control, powerful, and extremely quick. The four solenoids are controlled using a 4-channel relay and the stepper motors are controlled using Pololu stepper drivers.
+
+								<br><br><center><img src="./files/cube_algo.gif" alt="csteppte" width = 400> </center><br>
+
+								<p>Regarding software, it is possible to compute a solution algorithm given the initial state of a cube, meaning with one accurate scan of every cube face, it is possible to compute the solution algorithm and solve the cube without any further scans. In order to scan the six cube faces we placed fixed camera beneath the cube to take images of each face while the arms rotate each face of the cube down towards the camera. We decided given the fixed camera frame and consistent face position relative to the camera no matter what orientation, we could implement a very simple color detection scheme by reading pixel values of each square on a given face. This means we do not need fancy computer vision packages or functions to detect and analyze the face. The main vulnerability of this simple method is different lighting conditions can affect the hardcoded pixel value ranges and thresholds. The algorithm we  chose to implement is called the Two-Phase Algorithm developed by Henry Kociemba. This algorithm is capable of solving any 3x3 cube configuration in 20 moves or less. It is one of the faster algorithms that exists today, and has plenty of documentation and even code implementations. We used a pre existing python implementation of this algorithm called kociemba. The python implementation of the algorithm takes in as an input a 54 letter string that encodes the cube’s initial state. The 54 letter string is derived from the 9 squares on each of the cube’s 6 faces. The output of kociemba is a string of moves that is the solution algorithm. We structured our code to accommodate the algorithm string output by creating functions for each move that execute the correct stepper motor and solenoid movements according to the desired move. Once these functions are tuned, executing the solution algorithm is a simple as calling the functions for each move in the solution algorithm.</p>
 
 
 
@@ -64,36 +72,49 @@
 						<!-- Hardware -->
 							<article id="Hardware" style="display: none;">
 								<h2 class="major">Hardware</h2>
-								<p> The first step of the hardware design was to pick components and order them from the cheapest available source; our rationale for each choice, and component details, can be found below. In our case we used sourced using Ebay and Amazon.</p>
-								<h3><b><a href="https://www.omc-stepperonline.com/download/14HS13-0804S.pdf ">Stepper Motor</a></b></h3>
-								<img src="./files/NEMA14Pretty.jpg" alt="csteppte"><br>Stepper Motor</center><br>
-								<p>These stepper motors are small and powerful, measuring only 35mm in square base and outputting 18 Ncm of holding torque. These steppers have 1.8 degree steps, making a full rotation in 200 steps. These 4-wire bipolar stepper motors run off of 12 or 24V and pull a maximum of 1.6A. </p>
-								<img src="./files/NEMA-14DIMENSIONS.jpg" alt="dimsetp" width = 750><br>This diagram includes useful dimensions of the stepper motor, which we used to mount them to our project.</center><br>
-								<h3><b><a href="https://www.pololu.com/product/2133">DRV8825 Driver</a></b></h3>
-								<img src="./files/StepperDriverPretty.jpg" alt="driverthing" width = 750><br>Stepper Motor Driver</center><br>
-								<p> We chose these stepper drivers because they have six micro-step resolutions, down to 1/32 of a step, meaning we can control the bipolar stepper motors with extreme precision. These drivers have adjustable current limiting, and can take in 8-45V.</p>
-								<img src="./files/stepperWiring.png" alt="dirverwiring" width = 750><br>Stepper Motor Driver Wiring</center><br>
-								<p>We used the above wiring diagram to wire our Nema 14 stepper motors to the driver. In order to enable the 1/32 microstep mode, both the M0 and M2 pins were pulled high using 1KΩ resistors. The data sheet is <a href="https://www.pololu.com/file/download/drv8825.pdf?file_id=0J590 ">here</a></p>
-								<h3><b><a href="http://www.mouser.com/ds/2/678/V02-1046EN_DS_HEDM-55xx_2014-11-20-909010.pdf">Avago Optical Encoder</a></b></h3>
-								<img src="./files/AvagoEncoder.jpg" alt="encoder"><br>Avago Encoder</center><br>
-								<p>In order to implement a high accuracy closed-loop feedback system, we chose these optical encoders to track the absolute position of the stepper motors during movement. These optical encoders offer an extremely high resolution of 1024 counts per revolution. The encoders have floating shaft couplers for easy mounting to any shaft. These encoders are appropriately sized given our stepper size and can be easily packaged in alignment with the stepper shaft.  </p>
-								<img src="./files/EncoderWiring.png" alt="encoder" width = 750><br>Avago Encoder wiring</center><br>
-								<p>Channels A,B, and I can be wired to digital inputs to trigger interrupt driven timers in order calculate the shaft position.</p>
-								<h3><b><a href="https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf f">MPU-6050</a></b></h3>
-								<img src="./files/MPU6050Pretty.jpeg" alt="mpu" width = 750><br>MPU6050</center><br>
-								<p> We chose this 6-axis accelerometer/gyro because it is commonly used in robotic applications and has lots of supporting documentation and examples. Additionally, the MPU6050 is capable or operating at 400kHz in fast mode via I2C. This high throughput of readings allows us to control the motion of the table with high sensitivity. For our purposes, we only used the accelerations readings in x, y and z axes, but not gyroscope readings. Because the readings are quite noise, we used a running average filter to smooth the data.</p>
+								<p> Hardware for this project includes a custom 3D printed parts, a laser cut acrylic chassis, and off-the-shelf actuators and electronic components. Our hardware design was inspired by exising rubik's solving robots, but we chose an entirely custom chassis to optimize integration and packaging of our four mechanical arm assemblies. Below we listed our rationale for each component, and component details, can be found below. In our case we used sourced using Ebay and Amazon.</p>
+
 								<h3><b>Mechanical Design</b></h3>
-								<p> In order to allow for a fast iteration timeline on the hardware design, each part was carefully designed for rapid prototyping manufacture. In our case this means using only off the shelf hardware, 3D printed parts, and laser cut acrylic sheet. After arbitrarily picking the major dimensions of the table and base, we split the hardware design into two projects for faster execution. Adam modeled the ball joints, designed the two-piece arms using a “Y” configuration to stop unwanted rotation, the attachment method to the table and stepper motor shafts, and designed the acrylic table itself. Eric modeled the stepper motors and encoders, 3D printed mounts to hold these components together, and an acrylic base for the entire project and some beautiful arachnid inspired legs. Most of the parts required an iteration or two to find the perfect design and fitment, but we were prepared for this eventuality and finished the hardware design a few weeks before the deadline for the integrated project. The finished CAD design can be seen below in all its glory:</p>
+								<br><br><br><center><img src="./files/parts.jpg" alt="csteppte" width = 550 class=rotate90> </center><br><br><br><br>
+
+								<h4><b>Mechanical Arm Assembly</b></h4>
+
+								<p> The arm assembly was designed to be fast and tightly packaged. The design requirements for the arm assembly were that it must be able to rotate the claw using a stepper motor and grab or release the cube face using a solenoid. To achieve both these degrees of freedom, we chose a sliding spur gear transmission. This allows for the main shaft and claw to slide forward and backward with the help of the solenoid to engage or disengage the cube face, while still transferring rotation through the stepper motor’s main gear.  In order to increase the speed of rotation, we used a transmission with a ~2.5:1 gear ratio. Because the stepper motor was below the main shaft, as opposed to in line, the solenoid could be place in line with the main shaft. We chose to 3D print the fixed size claws out of PLA plastic and glue the claws onto our steel shafts. The shafts were constrained by the bearings using 3D printed bearing blocks. The spur gears themselves were 3D printed with a 1.5m tooth module. The main gear was printed with a D-bore to fit the stepper motor shaft, while the small gear was glued to the steel shaft using CA glue. Stepper motor mounts were also designed and printed to constrain the motors to the the underside of the top chassis plate. Small risers were also printed to axially align the solenoids with the main shafts. All parts were fastened to top plate of the chassis using M3 hardware and CA glue:</p>
 								<img src="./files/isometric.png" alt="iso" width = 750><br></center><br>
-								<img src="./files/top.png" alt="top" width = 750><br></center><br>
-								<img src="./files/siderender.jpg" alt="SRednr" width = 750><br></center><br>
-								<img src="./files/renderarms.jpg" alt="topsot" width = 750><br></center><br>
 
-								<p>In the spirit of our team mascot, the μgoat, we 3D printed a micro-goat to serve as the user controller for our stewart table. This goat was carefully sized to be ergonomic and ayn user’s hand. The MPU 60-50 was embedded into the base of the goat, with long extension wires connecting to the main PIC32 board. As the controller is manipulated by the user, the stewart table mimics the tilt and motion of the micro-goat. </p>
+								<h4><b>Chassis</b></h4>
+
+								<p>The chassis was designed to emanate simple, clean, elegant beauty. A mix of angular, and curvaceous edges and perimeters were used. The chassis was designed completely symmetrically around the central axis. The top chassis plate had all necessary mounting holes for the mechanical arm assemblies, while the bottom chassis plate was main used to mount the Pi camera and all other electronics, including the 4 channel relay, the Raspberry Pi, and 2 breadboards. The legs were designed to separate the two plates, and lift the entire chassis off the ground. Finally, the top plate was designed to be easily removed by lifting it vertically since the legs simply fit into slot through the top plate. The entire chassis was made using 12” x 12” x 02” white acrylic sheets. The chassis was assembled using CA glue.</p>
+
+								<h3><b>Actuators and Electrical Components</b></h3>
+								<h4><b>Stepper Motors</b></h4>
+								<center><img src="./files/nema17.jpg" alt="csteppte" width = 400><br>Nema 17</center><br>
+								<p>These stepper motors are small and powerful, measuring only 42mm in square base and outputting 26 Ncm of holding torque. These steppers have 1.8 degree steps, making a full rotation in 200 steps. These 4-wire bipolar stepper motors run off of 12 or 24V and pull a maximum of 1.6A. These steppers are commonly used in CNC and 3D Printer applications. </p>
+
+								<h4><b>Stepper Motor Drivers</b></h4>
+								<center><img src="./files/StepperDriverPretty.jpg" alt="driverthing" width = 400><br>Pololu DRV8825</center><br>
+								<p> We chose these stepper drivers because they have six micro-step resolutions, down to 1/32 of a step, meaning we can control the bipolar stepper motors with extreme precision. These drivers have adjustable current limiting, and can take in 8-45V. We used an external 12V 55A server power supply to power our stepper motors through the driver.</p>
+								<center><img src="./files/driver_wiring.jpg" alt="csteppte" width = 400></center><br>
+								<p>We used the above wiring diagram to wire our Nema 17 stepper motors to the driver. We chose to run our stepers using the 1/4 microstep mode in order to have smooth rotation while not compromising torque, which decreases with smaller micrsteps.To enable 1/4 microstep mode both the M0 and M2 pins were pulled high using 1KΩ resistors.
+
+								<h4><b>Solenoids</b></h4>
+								<center><img src="./files/solenoid.jpg" alt="encoder" width=400><br>10mm Stroke 12V 2A Soleniod</center><br>
+								<p>Solenoids operate by generating a magnetic field to force a rod forward or backward. When the solenoid is powered, the electromagnet turns on and the piston is pushed forward. When the soleniod is unpowered, a spring causes the piston to return to its original position. We chose these solenoids because they are 12V, meaning they can be powered off the same power supply as the stepper motors. They have a 10mm stroke, enough range for the claw to overlap with the cube face but also completely disengage. The solenoids were constrained to the back of the steel shafts by epoxying the ballnut to the back of the shaft.</p>
+
+								<h4><b>Relay</b></h4>
+								<center><img src="./files/4ch_relay.jpg" alt="mpu" width = 400><br>Sainsmart 4-Channel Relay | 30V 10A</center><br>
+								<p> This 4 Channel Relay is used to power and control the 4 solenoids. Each solenoid pulls 2A and each relay channel is rated for a maximum of 10A. The relay must be wired to an external power supply, which in our case was a 12V 55A server power supply. Each channel is controlled using a GPIO pin; high is enabled, while low is disabled.</p>
+
+								<h4><b>Steel Shafts</b></h4>
+								<center><img src="./files/shafts.jpg" alt="mpu" width = 400><br>8mm x 100mm Hardened Steel Shafts</center><br>
+								<p> These shafts are are used to translate the rotation from the spur gear to the claw and the translational force of the solenoids.</p>
+
+								<h4><b>Bearings</b></h4>
+								<center><img src="./files/bearings.jpg" alt="mpu" width = 400><br>608zz Ball Bearings (skateboard bearings)</center><br>
+								<p> These bearings are used to ensure low friction, smooth motion of the shafts for both its rotational and translational movements. In other words the bearings allow the shafts to spin and slide. The bearings are used to constrain the shaft directly inline with the cube face.</p>
+
+								
 							<div class="close">Close</div></article>
-
-
-
 
 
 
@@ -103,36 +124,68 @@
 								<h2 class="major">Software</h2>
 								<p>The software for this project is split up into a couple categories: sensor reading, the dynamics/control algorithm, and motor driving. It can be found <a href="https://github.com/adamweld/microgoats_stewie">here.</a>  The main file that our code runs from is called stewie_main.c. Additionally, we used the protothreads, tft display, and I2C helper libraries.</p>
 
-								<h2><b>Accelerometer Reading</b></h2>
-								<p>Reading from the Invensense MPU6050 module is quite simple as the data sheet spells out the register map quite well. Additionally, it is an incredibly popular device with a plethora of different libraries written for it. In our case, we decided to abstract complexity and used the i2c_helper.h library written by Caulley, Nehoran, and Zhao in their 2015 4760 final project. Using their helper functions this is the general form:</p>
-								<img src="./files/i2c_accel.jpg" alt="coordsys"  width = 750><br>Code Snippet</center><br>
-								<p>The readImuValues function packages the three accelerometer and three gyroscope values into a single array named values[]. Then to read the values, the index of the value of interest is called. Because the IMU values were somewhat noisy and very sensitive to movement, we implemented a running average smoothing filter using a 20th time step average. Then, using the x, y and z acceleration values,  weable to calculate theta and phi, describing the orientation of the table in the X and Y axes. These two angles are the inputs to Padraig’s algorithm which outputs the stepper movements for each stepper motor in order to set the table to the orientation determined by theta and phi. </p>
+								<h3><b>Rubik's Cube Scanning</b></h3>
+								<p>There are typically two formats that people use to represent the states of a rubik cube. The String Representation looks like the following, and typically serves as the input to solving algorithms. </p>
+
+								<img src="./files/string.png" alt="coordsys"  width = 500></center><br>
+
+								<p>The Matrix Representation looks like the following, and for us, it serves as an intermediate form for programming purposes.</p>
+
+								<img src="./files/array.png" alt="coordsys"  width = 500></center><br>
 
 
-								<h2><b>Dynamics and Controls</b></h2>
-								<center><img src="./files/platformCoordinateSystems.png" alt="coordsys"><br>Platform Coordinate and Vector Definitions</center><br>
-								<p>This photo illustrates the coordinate systems that are used in this project. We base everything around the body frame where the constant T vector describes the length and direction from the origin to the center of the table. Technically, given that this system as theta, phi, and z degrees of freedom, this T vector could be a dynamic input. For the purpose of simplicity we initialize this vector as static for now. This is to say that the center of the moving platform should remain stationary. The B-sub-i vector describes the constant vector from the origin to the actuator shaft. The L-sub-i vector describes what must be calculated which is the length that needs to be output from the system. The motor spins two 3D printed segments which move upwards. We will calculate this in the next step. The P-sub-i vector describes the constant vector from the platform frame origin to the end-effector pivot point. We can see that, once we have rotated the p vector into the body frame, we can easily calculate the L-sub-i vector by a summation of the other vectors. This is shown in equation one below. I will also describe the direction cosine matrices. The sub-i values represent each of the actuators and therefore the calculations for for arbitrarily many effectors. </p>
-								<img src="./files/equations1.jpg" alt="eq1"  width = 750><br>Vector Math</center><br>
-								<p>Equation one above shows the sum of vectors that allow us to calculate the shaft-to-platform vector for each of the three motors. The matrix called BRp below equation one shows the theta-phi restricted direction cosine matrix. This matrix allows us to transform vectors in the platform frame to ones in the body frame. This is useful for calculating the sum of vectors in the body frame. For a given input theta and phi, which are taken from the accelerometer readings, the p-sub-i vector values will change in the body frame and this matrix is required to find those. The identity matrix shows that we zeroed out the psi direction cosine matrix. </p>
-								<img src="./files/stewart.jpg" alt="stew"><br>Actuator Schematic</center><br>
-								<p>The figure above shows the shaft of the motor (the circle) and the legs that attach it to the platform and allow it to move. The capital letters denote angles, where the lowercase denotes length of the side of the triangle. Large E, opposite of side e, is the sum of this rest angle, 90 degrees, and the negative of the shaft input angle. The dotted line ‘f’ value is the Euclidean norm of the L vector that we have calculated and is an input to this calculation (we have already determined it using equation one and our angle inputs). Phi-sub-zero denotes the natural state of the leg, which is resting against the body. This is a constant value.</p>
-								<img src="./files/equations2.jpg" alt="eq2"><br>Actuator Math</center><br>
-								<p>The equations above show how we will find angle that must be sent to the motors. E is calculated by using equation two: the law of cosines. We know that the angle E is the summation of the rest angle phi-sub-zero, 90 degrees, and our shaft input angle. Therefore, we use equation four to find our xi value which is the angle that the shaft of the motor needs to turn. This angle in degrees is converted to step values and sent to the motor driving code. </p>
-								<img src="./files/matlablength.jpg" alt="matlablength"><br></center><br>
-								<img src="./files/matlabangle.jpg" alt="matlabangle"><br></center><br>
-								<p>Before we implemented this algorithm, we wrote it in MATLAB to confirm that all numbers made sense. This especially helped when our calculations yielded complex values which would otherwise shut down the PIC processor. </p>
+								<p> In the String Representation, the characters represent the faces, such as U -> Up, R -> Right, F -> Front, D -> Down, L -> Left, and B -> Back. In the Matrix Representation, the characters represent the color, such as B -> Blue, W -> White, R -> Red, O -> Orange, G -> Green, and Y -> Yellow.
+								We thus defined our rubik cube scanning procedure to be the following. </p>
 
-								<h2><b>Motor Driving</b></h2>
+								<img src="./files/diagram1.jpg" alt="coordsys"  width = 500></center><br><br><br>
+								
+								<p>Step 1: The Rubik Cube to Matrix Representation <br>
+								Essentially for this step, we took 6 pictures of 6 different facets at the very beginning, identify the 9 tiles of each facet, read their RGB or HSV values, and compare with our pre-calibrated ranges for each of the 6 colors. It was a rather straightforward and effective process, as we did not employ any sophisticated CV libraries such as OpenCV. However, there were a few key observations that we made and they made our scanning processes much simpler and effective.</p>
 
-								<p>Another aspect of the design that was important for smooth operation was the stepper motor drive design. Our motors have 200 discrete steps per full 360 degree revolution, resulting in a precision of 1.8 degrees per step. This isn’t particularly high; luckily the motor drivers we chose, the Texas Instruments DRV8825, includes a functionality called microstepping wherein the motor can achieve sub step accuracy. We ran our motors at the maximum micro step quantity of 32, which is set using a simple resistor pull-up selection. This results in motors that now take 1600 steps per full revolution with a theoretical precision of about .05 degrees. </p>
+								<p> Only scan at the beginning
+								The rubik cube solver does not have to continuously scan throughout the solving process. It only needs to scan the six facets at the beginning for once, as all of the later states can be derived from its first states and the rotations.
+								Read the RGB values from fixed positions
+								As the rubik cube would stay at a fixed position relative to the camera, so after some initial calibration, the scanning program can read from the same nine positions from the pictures taken to read the colors of each facet.
+								Use HSV representation instead of RGB
+								RGB representations perform poorly in response to different lighting and environment settings. Instead we translated RGB to HSV first and read the H (hue) value to recognize the color. Based on our experiments, the H value would stay rather constant under different settings for the same cube and color. However, sometimes the H value would be bad at representing colors that are “similar”. The H value was very effective in differentiating between blue, green, red, or white - that their H value readings would be drastically different, but it was bad in differentiating between white and yellow, or red and orange. In that case, we resorted to the S (saturation), and V (lightness) readings. The following is our code for this implementation. </p>
 
-								<p>The motor drivers are controlled by the microcontroller through an interface of two digital pins per driver. The DIRECTION pin sets the direction of rotation, and a pulse to the STEP pin steps the motor once in that direction. This code must be run in a high frequency, timer controlled ISR to achieve reasonable output speeds in the 32 microstep mode. The maximum speed of the motors is set by the frequency of this ISR; the difficulty of driving the motors smoothly is that in the simplest implementation of the microcontroller ISR the motors will always run at full speed towards the target position. If the ISR is setup with a high period, the motors run smoothly but the maximum speed is limited. If the ISR is setup with a low period, the motor can run extremely fast but is likely to accelerate quickly to each target position and then brake suddenly on arrival causing a noisy, jittery performance. </p>
+								<img src="./files/codesnippet1.png" alt="coordsys"  width = 600></center><br>
 
-								<p>Our initial implementation of stepper driver code simply determined the direction of movement between each motor’s current position and its target position, and stepped the motor once in that direction. Here is what our ISR function looks like:</p>
-								<img src="./files/CurrentISRScreen.png" alt="currISR" width = 750><br></center><br>
-								<p> We also spent a while working on a more optimal method of driving the stepper motors with variable speed. The theory here was that rather than having the IMU thread update the target position, and the ISR step towards that position at maximum speed, the IMU thread would also calculate and set a speed of rotation for the ISR to carry out. This is implemented with the variable stepInterval, generated by function computeNewSpeed(), which is used in the ISR loop to skip steps for smooth changes in motor speed. If stepInterval is set to 1, the motor will run at full speed. With a value of 2 it runs at half speed, at three one third speed, et cetera. Here is the implementation:</p>
-								<img src="./files/betterISRScreen.png" alt="cbettISR" width = 750><br></center><br>
-								<p> The result of this change is that the ISR can be run at an extremely fast frequency, setting the maximum speed of the stepper motors higher without sacrificing smoothness. The above implementation was tested with a single stepper motor successfully, but we did not have time to get all three motors running using this variable speed system and thus demoed with the initial stepper driver method.</p>
+								<p> Step 2: Matrix Representation to String Representation <br>
+								The string representation is one that doesn’t speak about the actual colors of each tile, instead, the relative locations. For example, after the first step we recognized a tile of a face to be blue, but instead of putting it as a “B” for blue, we know that, let’s say, the front facet will be entirely blue after solving it, so we will represent this tile using “F”, for front. In English, it says that “this tile has the color that the front facet has”. How do we know what color each facet will have at the end then? This question brings us to the next key observation that we made. </p>
+
+								<p> The center tile of a facet will always stay there: If you know a little bit about the structures of the rubiks, there are typically the side tiles, the corner tiles, and the center tiles. What’s special about the center tiles is that it will always stay with that face no matter how much you mess up the rubik, so by reading the color of the center tile, we know the color of that entire facet. </p>
+
+								<p>The next thing is to construct the output string. We had our own scanning sequence and there are certain conventions that need to be followed when constructing the String Representation. As in the next diagram, we had our own scanning sequence that’s optimized towards mechanical simplicity, and it does not necessarily align with the sequence of the output string. Our String Representation is designed to be fed into Henry Kociemba’s two-phase algorithm implemented in this github repo: https://github.com/muodov/kociemba, which used this representation as the input, so out of convenience, we followed the same design.</p>
+
+
+
+								<h3><b>Solving Algorithm and User Interface</b></h3>
+
+								<p>We used Henry Kociemba’s two-phase algorithm to solve the cube. The github repository by muodov already implements this algorithm so we just took advantage of that. This site is not meant to explain the solving algorithm, as there are better sites to read for this purpose. We recommend reading the following links to understand Kociemba’s two-phase algorithm.
+								(http://kociemba.org/twophase.htm, http://kociemba.org/math/twophase.htm, http://kociemba.org/math/imptwophase.htm ) </p>
+
+
+								<p> Calling for a solution is as easy as the following one-liner, where each state is a 54 characters long String Representation of the cube state, and typically the solved state is “UUUUUUUUURRRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB”, representing a solved rubik cube. In addition, what’s nice about this implementation is that the second argument can be any valid rubik cube’s state, and the algorithm would still be able to provide a solution that solves the rubik to that arbitrary state. This feature proved to be very convenient as we were building our UI system to demonstrate the cube step by step.</p>
+
+								<center><img src="./files/koceimba.png"  width = 400></center><br>
+
+								<p>We mostly referred to this github <a href= "https://github.com/adrianliaw/PyCuber">repo</a> to build our UI system. This repo not only created a framework to represent a rubik cube object, but also provided a solving algorithm. However we mostly focused on the prior, as we already had our Kociemba algorithm. As this <a href = "https://github.com/adrianliaw/PyCuber/issues/14">post<a/> suggested, we can pass in a solution using Kociemba’s algorithm to the cube object, to manipulate the cube to the current state from the original clean state.</p>
+
+
+								<center><img src="./files/koceimba2.png" width = 450 ></center><br>
+
+								<p>The author of PyCuber repo claimed that the above is going to print the cube in six colors in the terminal, but according to our testing it was only able to print the characters that represent those colors, such as “y”, “r”, or “b”. Our contribution is that we created a helper function called “printRubik” that will actually print the rubik cube object in colors in the terminal. It’s listed here in our github <a href="https://github.com/ericinventor/RubiksCubeSolver/blob/f4705570636180ee77435acf9fdf772a9bf77de0/Code/PyCuberColorScheme.py#L10">repo.</a> </p>
+							
+
+								<h3><b>Implementing Moves</b></h3>
+
+								<p>As demonstrated in the following code snippet, we parsed each move of the solution into a queue, and wrote a while loop that executes each move one by one, until the queue is empty. It’s important to setup a delay between each moves, because the function calls don’t “wait” for the mechanical motions to be finished, all of the instructions to the motors would be sent at once, or at the speed that this while loop gets executed, which is sub-milliseconds, and obviously in that case the rubik cube would be messed up.</p>
+
+								<center><img src="./files/moves.png" alt="currISR" width = 550><br></center><br>
+
+								<p>Our executeOneMove function will be able to decode the moves, such as “R”, “L”, “U’”, and etc. into instructions for the motor. If you want build a rubik solver on your own, you might want to do something specific to your mechanical designs here, but the idea here is to have multiple layers of abstraction to make things simpler. As an <a href=" https://github.com/ericinventor/RubiksCubeSolver/blob/8e779955a0c595d5887c0f50653e87478073719e/Code/MechanicalAPI.py#L197">example,></a>, to interpret “R”, we called a few helper functions that are specific to the claws. </p>
+
 
 							
 							<div class="close">Close</div></article>
@@ -297,7 +350,7 @@
                         
 				<!-- Footer -->
 					<footer id="footer" style="display: block;">
-						<p class="copyright">© Cornell <a href="https://people.ece.cornell.edu/land/courses/ece4760/">ECE4760</a></p>
+						<p class="copyright">© Cornell <a href="http://skovira.ece.cornell.edu/ece5725/">ECE 5725</a></p>
 					</footer>
 
 			</div>
